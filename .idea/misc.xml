@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Black">
+<<<<<<< HEAD
     <option name="sdkName" value="Python 3.14 (aviation_data_platform)" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.14 (aviation_data_platform)" project-jdk-type="Python SDK" />
+=======
+    <option name="sdkName" value="uv (aviation_data_intelligence_platform)" />
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="uv (aviation_data_intelligence_platform)" project-jdk-type="Python SDK" />
+>>>>>>> 5914e2111cd6ae9512a082744365ed70f61fa23d
 </project>

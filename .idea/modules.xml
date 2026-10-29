@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/aviation_data_platform.iml" filepath="$PROJECT_DIR$/.idea/aviation_data_platform.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/aviation_data_intelligence_platform.iml" filepath="$PROJECT_DIR$/.idea/aviation_data_intelligence_platform.iml" />
+>>>>>>> 5914e2111cd6ae9512a082744365ed70f61fa23d
     </modules>
   </component>
 </project>
