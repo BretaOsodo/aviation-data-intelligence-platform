@@ -1,4 +1,5 @@
 import openmeteo_requests
+import json
 
 import pandas as pd
 import requests_cache
@@ -123,16 +124,6 @@ current_weather_rows = []
 hourly_weather_rows = []
 
 for airport, response in zip(AIRPORTS, responses):
-    print("\n" + "=" * 60)
-    print(f"{airport['icao']} | {airport['name']}")
-    print(f"City: {airport['city']}")
-    print(
-        f"Coordinates: {response.Latitude():.4f}, "
-        f"{response.Longitude():.4f}"
-    )
-    print(f"Elevation: {response.Elevation()} m")
-    print(f"Timezone: Africa/Nairobi")
-    print(f"UTC offset: {response.UtcOffsetSeconds()} seconds")
 
     # ------------------------------
     # Current conditions
@@ -181,19 +172,6 @@ for airport, response in zip(AIRPORTS, responses):
         current.Time(), tz=timezone.utc
     ).isoformat()
 
-    print(f"Observation time: {current_time}")
-    print(f"Temperature: {temperature:.1f} °C")
-    print(f"Humidity: {humidity:.0f}%")
-    print(f"Apparent temperature: {apparent_temperature:.1f} °C")
-    print(f"Precipitation: {precipitation:.1f} mm")
-    print(f"Rain: {rain:.1f} mm")
-    print(f"Weather code: {weather_code}")
-    print(f"Cloud cover: {cloud_cover:.0f}%")
-    print(f"Wind speed: {wind_speed:.1f} knots")
-    print(f"Wind direction: {wind_direction:.0f}°")
-    print(f"Wind gusts: {wind_gusts:.1f} knots")
-    print(f"Surface pressure: {pressure:.1f} hPa")
-    print(f"Visibility: {visibility:.0f} m")
 
     current_weather_rows.append({
         "airport_icao": airport["icao"],
@@ -217,3 +195,14 @@ for airport, response in zip(AIRPORTS, responses):
         "surface_pressure_hpa": pressure,
         "visibility_m": visibility,
     })
+
+def convert_to_json():
+	weather_json= json.dumps(
+		current_weather_rows,
+		indent=4,
+		allow_nan=False,
+	)
+	return weather_json
+if __name__ == "__main__":
+	weather_json = convert_to_json()
+	print(weather_json)
