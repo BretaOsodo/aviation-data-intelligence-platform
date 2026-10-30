@@ -196,13 +196,9 @@ for airport, response in zip(AIRPORTS, responses):
         "visibility_m": visibility,
     })
 
-def convert_to_json():
-	weather_json= json.dumps(
-		current_weather_rows,
-		indent=4,
-		allow_nan=False,
-	)
-	return weather_json
+def get_weather_data():
+
+    return current_weather_rows
+
 if __name__ == "__main__":
-	weather_json = convert_to_json()
-	print(weather_json)
+    print(json.dumps(get_weather_data(), indent=4, allow_nan=False))
