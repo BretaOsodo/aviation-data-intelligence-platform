@@ -83,6 +83,44 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  # Weather streaming
+  weather-streaming:
+    build:
+      dockerfile: ./streaming/kafka/Dockerfile
+
+    container_name: weather-streaming
+    command: python -m streaming.kafka.weather_streaming
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      kafka1:
+        condition: service_healthy
+      kafka2:
+        condition: service_healthy
+
+    networks:
+      - aviation
+
+  # flight streaming service
+  flights_streaming:
+    build:
+      dockerfile: ./streaming/kafka/Dockerfile
+
+    container_name: weather-streaming
+    command: python -m streaming.kafka.flights_streaming
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      kafka1:
+        condition: service_healthy
+      kafka2:
+        condition: service_healthy
+
+    networks:
+      - aviation
+
   
   # KAFKA SCHEMA REGISTRY
   
