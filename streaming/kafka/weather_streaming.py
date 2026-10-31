@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 KAFKA_BOOTSTRAP_SERVERS = os.getenv(
     "KAFKA_BOOTSTRAP_SERVERS",
-    "127.0.0.1:9092,127.0.0.1:9093",
+    "kafka1:29092,kafka2:29092",
 )
 
 WEATHER_TOPIC = "airport-weather"

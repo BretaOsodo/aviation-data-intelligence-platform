@@ -1,4 +1,4 @@
-from streaming import weather_api
+from streaming.api import weather_api
 import json
 
 data = weather_api.convert_to_json()
