@@ -1,0 +1,119 @@
+
+{
+  "type": "record",
+  "name": "Flight",
+  "namespace": "com.aviation.platform",
+  "doc": "Avro schema for aviation flight tracking data",
+  "fields": [
+    {
+      "name": "flight_date",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "flight_status",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "departure",
+      "type": {
+        "type": "record",
+        "name": "Departure",
+        "fields": [
+          {"name": "airport", "type": ["null", "string"], "default": null},
+          {"name": "timezone", "type": ["null", "string"], "default": null},
+          {"name": "iata", "type": ["null", "string"], "default": null},
+          {"name": "icao", "type": ["null", "string"], "default": null},
+          {"name": "terminal", "type": ["null", "string"], "default": null},
+          {"name": "gate", "type": ["null", "string"], "default": null},
+          {"name": "delay", "type": ["null", "int"], "default": null},
+          {"name": "scheduled", "type": ["null", "string"], "default": null},
+          {"name": "estimated", "type": ["null", "string"], "default": null},
+          {"name": "actual", "type": ["null", "string"], "default": null},
+          {"name": "estimated_runway", "type": ["null", "string"], "default": null},
+          {"name": "actual_runway", "type": ["null", "string"], "default": null}
+        ]
+      }
+    },
+    {
+      "name": "arrival",
+      "type": {
+        "type": "record",
+        "name": "Arrival",
+        "fields": [
+          {"name": "airport", "type": ["null", "string"], "default": null},
+          {"name": "timezone", "type": ["null", "string"], "default": null},
+          {"name": "iata", "type": ["null", "string"], "default": null},
+          {"name": "icao", "type": ["null", "string"], "default": null},
+          {"name": "terminal", "type": ["null", "string"], "default": null},
+          {"name": "gate", "type": ["null", "string"], "default": null},
+          {"name": "baggage", "type": ["null", "string"], "default": null},
+          {"name": "delay", "type": ["null", "int"], "default": null},
+          {"name": "scheduled", "type": ["null", "string"], "default": null},
+          {"name": "estimated", "type": ["null", "string"], "default": null},
+          {"name": "actual", "type": ["null", "string"], "default": null},
+          {"name": "estimated_runway", "type": ["null", "string"], "default": null},
+          {"name": "actual_runway", "type": ["null", "string"], "default": null}
+        ]
+      }
+    },
+    {
+      "name": "airline",
+      "type": {
+        "type": "record",
+        "name": "Airline",
+        "fields": [
+          {"name": "name", "type": ["null", "string"], "default": null},
+          {"name": "iata", "type": ["null", "string"], "default": null},
+          {"name": "icao", "type": ["null", "string"], "default": null}
+        ]
+      }
+    },
+    {
+      "name": "flight",
+      "type": {
+        "type": "record",
+        "name": "FlightDetails",
+        "fields": [
+          {"name": "number", "type": ["null", "string"], "default": null},
+          {"name": "iata", "type": ["null", "string"], "default": null},
+          {"name": "icao", "type": ["null", "string"], "default": null},
+          {"name": "codeshared", "type": ["null", "string"], "default": null}
+        ]
+      }
+    },
+    {
+      "name": "aircraft",
+      "type": ["null", {
+        "type": "record",
+        "name": "Aircraft",
+        "fields": [
+          {"name": "registration", "type": ["null", "string"], "default": null},
+          {"name": "iata", "type": ["null", "string"], "default": null},
+          {"name": "icao", "type": ["null", "string"], "default": null},
+          {"name": "icao24", "type": ["null", "string"], "default": null}
+        ]
+      }],
+      "default": null
+    },
+    {
+      "name": "live",
+      "type": ["null", {
+        "type": "record",
+        "name": "Live",
+        "fields": [
+          {"name": "updated", "type": ["null", "string"], "default": null},
+          {"name": "latitude", "type": ["null", "double"], "default": null},
+          {"name": "longitude", "type": ["null", "double"], "default": null},
+          {"name": "altitude", "type": ["null", "double"], "default": null},
+          {"name": "direction", "type": ["null", "double"], "default": null},
+          {"name": "speed_horizontal", "type": ["null", "double"], "default": null},
+          {"name": "speed_vertical", "type": ["null", "double"], "default": null},
+          {"name": "is_ground", "type": ["null", "boolean"], "default": null}
+        ]
+      }],
+      "default": null
+    }
+  ]
+}
