@@ -107,7 +107,7 @@ services:
     build:
       dockerfile: ./streaming/kafka/Dockerfile
 
-    container_name: weather-streaming
+    container_name: flights-streaming
     command: python -m streaming.kafka.flights_streaming
     restart: unless-stopped
     env_file:
