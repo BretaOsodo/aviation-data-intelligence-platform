@@ -15,13 +15,7 @@ API_KEY = os.getenv("API_KEY")
 API_URL = "https://api.aviationstack.com/v1/flights"
 
 KENYA_AIRPORTS = [
-    "NBO",
-    "WIL",
-    "MBA",
-    "KIS",
-    "EDL",
-    "MYD",
-    "UKA",
+    "NBO"
 ]
 
 REQUEST_TIMEOUT = 30
