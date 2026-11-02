@@ -84,7 +84,6 @@ def delivery_report(err, msg):
         )
 
 
-
 # 4. SAFE KAFKA PUBLISHING
 
 
@@ -162,7 +161,7 @@ def publish_invalid_weather_dlq(record, errors):
         airport_code = "unknown"
 
     dead_letter_record = {
-        "source": "weather_api",
+        "source": "weather_streaming",
 
         "record": record,
 
@@ -313,7 +312,7 @@ def normalize_weather_data(data):
 
     if not isinstance(data, list):
 
-        raise TypeError(
+        raise ValueError(
             "Weather API must return a list of dictionaries"
         )
 
