@@ -1,7 +1,7 @@
 from streaming.api import flights
 import json
 
-data = flights.flight_data
+data = flights.get_airports()
 
 def test_flights_data():
     assert isinstance(data, list)
