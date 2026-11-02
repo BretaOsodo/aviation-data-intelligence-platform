@@ -1,10 +1,10 @@
 from streaming.api import weather_api
 import json
 
-data = weather_api.convert_to_json()
+data = weather_api.get_weather_data()
 
 def test_weather_api():
-    parsed_data = json.loads(data)
+    parsed_data = data
 
     assert isinstance(parsed_data, list)
     assert len(parsed_data) > 0
