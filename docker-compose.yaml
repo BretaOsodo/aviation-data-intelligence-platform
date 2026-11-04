@@ -171,7 +171,9 @@ services:
   # SPARK MASTER
   
   spark-master:
-    image: apache/spark:3.5.6
+    build:
+      context: ./streaming/spark
+      dockerfile: Dockerfile
     container_name: spark-master
     hostname: spark-master
     command:
@@ -195,7 +197,9 @@ services:
   # SPARK WORKER 1
   
   spark-worker1:
-    image: apache/spark:3.5.6
+    build:
+      context: ./streaming/spark
+      dockerfile: Dockerfile
     container_name: spark-worker1
     hostname: spark-worker1
     command:
@@ -221,7 +225,9 @@ services:
   # SPARK WORKER 2
   
   spark-worker2:
-    image: apache/spark:3.5.6
+    build:
+      context: ./streaming/spark
+      dockerfile: Dockerfile
     container_name: spark-worker2
     hostname: spark-worker2
     command:
@@ -243,7 +249,52 @@ services:
       - aviation
     restart: unless-stopped
 
-  
+  #Weather validation
+
+  weather_validation_job:
+    build:
+      context: ./streaming/spark
+      dockerfile: Dockerfile
+
+    container_name: weather_validation_job
+
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
+
+      S3_BUCKET: airport-weather-invalid-data
+
+    entrypoint: [ "/bin/bash", "-c" ]
+    command:
+      - |
+        sleep 15
+        exec /opt/spark/bin/spark-submit \
+          --master spark://spark-master:7077 \
+          --deploy-mode client \
+          --executor-cores 1 \
+          --executor-memory 1500m \
+          --conf spark.executor.memoryOverhead=512m \
+          --conf spark.sql.shuffle.partitions=2 \
+          --conf spark.default.parallelism=2 \
+          --conf spark.network.timeout=600s \
+          --conf spark.cores.max=2 \
+          --conf spark.driver.extraClassPath=/opt/spark/jars/* \
+          --conf spark.executor.extraClassPath=/opt/spark/jars/* \
+          /spark/validate_weather_job.py
+
+    depends_on:
+      spark-master:
+        condition: service_started
+      spark-worker1:
+        condition: service_started
+      spark-worker2:
+        condition: service_started
+
+    networks:
+      - aviation
+
+    restart: unless-stopped
+
   # CLICKHOUSE - ANALYTICAL DATABASE
   
   clickhouse:
