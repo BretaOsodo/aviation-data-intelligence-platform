@@ -259,10 +259,10 @@ services:
     container_name: weather_validation_job
 
     environment:
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
-
-      S3_BUCKET: airport-weather-invalid-data
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      S3_BUCKET: ${S3_BUCKET}
+      S3_INVALID_PREFIX: ${S3_INVALID_PREFIX}
 
     entrypoint: [ "/bin/bash", "-c" ]
     command:
