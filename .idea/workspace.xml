@@ -6,15 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="2ad00318-2dd8-4553-b598-bde2d08a414f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.cache.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/.cache.sqlite" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/aviation_data_platform.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/aviation_data_platform.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/streaming/api/flights.py" beforeDir="false" afterPath="$PROJECT_DIR$/streaming/api/flights.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/streaming/kafka/flights_streaming.py" beforeDir="false" afterPath="$PROJECT_DIR$/streaming/kafka/flights_streaming.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/streaming/kafka/weather_streaming.py" beforeDir="false" afterPath="$PROJECT_DIR$/streaming/kafka/weather_streaming.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_weather_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_weather_api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_weather_streaming.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_weather_streaming.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/streaming/spark/validate_flights_job.py" beforeDir="false" afterPath="$PROJECT_DIR$/streaming/spark/validate_flights_job.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,8 +20,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Dockerfile" />
         <option value="Python Script" />
+        <option value="Dockerfile" />
       </list>
     </option>
   </component>
@@ -57,19 +53,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\ADMIN\Desktop\MY PROJECTS\aviation_data_platform\streaming\api" />
