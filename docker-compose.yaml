@@ -295,6 +295,51 @@ services:
 
     restart: unless-stopped
 
+  #Flight validation job
+  flights_validation_job:
+    build:
+      context: ./streaming/spark
+      dockerfile: Dockerfile
+
+    container_name: flights_validation_job
+
+    environment:
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AIRPORT_INVALID_DATA: ${AIRPORT_INVALID_DATA}
+      AIRPORT_INVALID_PREFIX: ${AIRPORT_INVALID_PREFIX}
+
+    entrypoint: [ "/bin/bash", "-c" ]
+    command:
+      - |
+        sleep 15
+        exec /opt/spark/bin/spark-submit \
+          --master spark://spark-master:7077 \
+          --deploy-mode client \
+          --executor-cores 1 \
+          --executor-memory 1500m \
+          --conf spark.executor.memoryOverhead=512m \
+          --conf spark.sql.shuffle.partitions=2 \
+          --conf spark.default.parallelism=2 \
+          --conf spark.network.timeout=600s \
+          --conf spark.cores.max=2 \
+          --conf spark.driver.extraClassPath=/opt/spark/jars/* \
+          --conf spark.executor.extraClassPath=/opt/spark/jars/* \
+          /spark/validate_flights_job.py
+
+    depends_on:
+      spark-master:
+        condition: service_started
+      spark-worker1:
+        condition: service_started
+      spark-worker2:
+        condition: service_started
+
+    networks:
+      - aviation
+
+    restart: unless-stopped
+
   # CLICKHOUSE - ANALYTICAL DATABASE
   
   clickhouse:
