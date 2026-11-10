@@ -34,12 +34,15 @@ RUN curl -L https://jdbc.postgresql.org/download/postgresql-42.7.4.jar \
     -o ${SPARK_JARS_DIR}/commons-pool2.jar && \
     chmod 644 ${SPARK_JARS_DIR}/*.jar
 
+COPY jars/ /opt/spark/extra-jars/
+
 # Create /spark and copy jobs with correct ownership
 RUN mkdir -p /spark && chown spark:spark /spark
 COPY --chown=spark:spark \
     validate_flights_job.py \
     validate_weather_job.py \
-    streaming_job.py \
+    load_weather_to_clickhouse.py \
+    load_flights_to_clickhouse.py \
     /spark/
 
 RUN mkdir -p /spark/checkpoints && chown -R spark:spark /spark/checkpoints

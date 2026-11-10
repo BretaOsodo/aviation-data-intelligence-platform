@@ -340,10 +340,45 @@ services:
 
     restart: unless-stopped
 
+  weather_clickhouse_loader:
+    build:
+      context: ./streaming/spark
+      dockerfile: Dockerfile
+    container_name: weather_clickhouse_loader
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS}
+      INPUT_TOPIC: airport-validated
+      CLICKHOUSE_HOST: clickhouse
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+      CLICKHOUSE_DATABASE: ${CLICKHOUSE_DATABASE}
+    entrypoint: [ "/bin/bash", "-c" ]
+    command:
+      - |
+        sleep 15
+        exec /opt/spark/bin/spark-submit \
+          --master spark://spark-master:7077 \
+          --deploy-mode client \
+          --executor-cores 1 \
+          --executor-memory 1500m \
+          --conf spark.cores.max=2 \
+          --conf spark.driver.extraClassPath=/opt/spark/jars/* \
+          --conf spark.executor.extraClassPath=/opt/spark/jars/* \
+          --jars /opt/spark/extra-jars/clickhouse-spark-runtime-3.4_2.12-0.10.0.jar,/opt/spark/extra-jars/clickhouse-jdbc-0.9.5-all.jar \
+          /spark/load_weather_to_clickhouse.py
+    depends_on:
+      spark-master:
+        condition: service_started
+      clickhouse:
+        condition: service_started
+    networks:
+      - aviation
+    restart: unless-stopped
+
   # CLICKHOUSE - ANALYTICAL DATABASE
   
   clickhouse:
-    image: clickhouse/clickhouse-server:latest
+    image: clickhouse/clickhouse-server:26.8
     container_name: clickhouse-server
     hostname: clickhouse
     ports:
