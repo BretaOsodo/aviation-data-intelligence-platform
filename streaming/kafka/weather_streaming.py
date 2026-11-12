@@ -44,7 +44,7 @@ WEATHER_TOPIC = "airport-weather"
 DLQ_TOPIC = "airport-weather-dlq"
 
 POLL_INTERVAL_SECONDS = int(
-    os.getenv("WEATHER_POLL_INTERVAL_SECONDS", "300")
+    os.getenv("WEATHER_POLL_INTERVAL_SECONDS", "30")
 )
 
 producer_config = {
