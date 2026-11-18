@@ -1,0 +1,43 @@
+name: CD - Deplot to EC2
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ububtu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-provate-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Deploy to EC2 via SSH
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
+          
+          ssh "$EC2_USER@$EC2_HOST" << 'EOF'
+            set -e
+          
+            # Navigate to your project directory on EC2
+            cd /home/ubuntu/aviation-data-project
+          
+            # Pull the latest changes from GitHub
+            git pull origin main
+          
+            # Bring down old containers, build new ones with updated code, and run in background
+            docker compose down
+            docker compose up --build -d
+          
+            # Clean up dangling images to prevent disk bloat
+            docker image prune -f
+          EOF

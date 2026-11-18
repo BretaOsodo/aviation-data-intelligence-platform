@@ -1,0 +1,14 @@
+.env
+./streaming/flights.json
+
+# Terraform
+# Terraform
+infrastructure/.terraform/
+infrastructure/*.tfstate
+infrastructure/*.tfstate.*
+*.tfvars
+*.pem
+
+# Stray local artifacts
+127.0.0.1*
+docker

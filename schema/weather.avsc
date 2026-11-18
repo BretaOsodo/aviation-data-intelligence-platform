@@ -1,0 +1,28 @@
+
+{
+  "type": "record",
+  "name": "AirportWeather",
+  "namespace": "com.aviation.platform",
+  "fields": [
+    {"name": "airport_icao", "type": "string"},
+    {"name": "airport_iata", "type": "string"},
+    {"name": "airport_name", "type": "string"},
+    {"name": "city", "type": "string"},
+    {"name": "latitude", "type": "double"},
+    {"name": "longitude", "type": "double"},
+    {"name": "elevation_m", "type": "double"},
+    {"name": "observation_time_utc", "type": "string"},
+    {"name": "temperature_c", "type": "double"},
+    {"name": "relative_humidity_pct", "type": "double"},
+    {"name": "apparent_temperature_c", "type": "double"},
+    {"name": "precipitation_mm", "type": "double"},
+    {"name": "rain_mm", "type": "double"},
+    {"name": "weather_code", "type": "double"},
+    {"name": "cloud_cover_pct", "type": "double"},
+    {"name": "wind_speed_knots", "type": "double"},
+    {"name": "wind_direction_degrees", "type": "double"},
+    {"name": "wind_gusts_knots", "type": "double"},
+    {"name": "surface_pressure_hpa", "type": "double"},
+    {"name": "visibility_m", "type": "double"}
+  ]
+}
