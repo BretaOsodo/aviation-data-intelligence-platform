@@ -1,4 +1,4 @@
-name: CD - Deplot to EC2
+name: CD - Deploy to EC2
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ububtu-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
@@ -15,7 +15,7 @@ jobs:
       - name: Set up SSH Key
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-provate-key: ${{ secrets.EC2_SSH_KEY }}
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
       - name: Deploy to EC2 via SSH
         env:
