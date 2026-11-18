@@ -21,31 +21,56 @@ jobs:
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
+          CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_PASSWORD }}
+          CLICKHOUSE_USER: ${{ secrets.CLICKHOUSE_USER }}
+          CLICKHOUSE_DATABASE: ${{ secrets.CLICKHOUSE_DATABASE }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_SECRET_kEY: ${{ secrets.AWS_SECRET_kEY }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          API_KEY: ${{ secrets.API_KEY }}
+          KAFKA_BOOTSTRAP_SERVERS: ${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
           
-          ssh "$EC2_USER@$EC2_HOST" << 'EOF'
-            set -e
+          ssh "$EC2_USER@$EC2_HOST" "
+            export CLICKHOUSE_PASSWORD='$CLICKHOUSE_PASSWORD'
+            export CLICKHOUSE_USER='$CLICKHOUSE_USER'
+            export CLICKHOUSE_DATABASE='$CLICKHOUSE_DATABASE'
+            export AWS_ACCESS_KEY='$AWS_ACCESS_KEY'
+            export AWS_SECRET_KEY='$AWS_SECRET_KEY'
+            export AWS_SECRET_kEY='$AWS_SECRET_kEY'
+            export S3_BUCKET='$S3_BUCKET'
+            export API_KEY='$API_KEY'
+            export KAFKA_BOOTSTRAP_SERVERS='$KAFKA_BOOTSTRAP_SERVERS'
           
+            bash -s
+          " << 'EOF'
+            set -e
             PROJECT_DIR="/home/ubuntu/aviation-data-project"
             REPO_URL="https://github.com/BretaOsodo/aviation-data-intelligence-platform.git"
           
-            # Clone repository if it doesn't exist, otherwise navigate and pull
             if [ ! -d "$PROJECT_DIR" ]; then
-              echo "Cloning repository for the first time..."
               git clone "$REPO_URL" "$PROJECT_DIR"
             fi
           
             cd "$PROJECT_DIR"
-          
-            # Pull the latest changes from GitHub
             git pull origin main
           
-            # Bring down old containers, build new ones with updated code, and run in background
+            # Write out the .env file dynamically
+            cat << EOT > .env
+            CLICKHOUSE_PASSWORD=$CLICKHOUSE_PASSWORD
+            CLICKHOUSE_USER=$CLICKHOUSE_USER
+            CLICKHOUSE_DATABASE=$CLICKHOUSE_DATABASE
+            AWS_ACCESS_KEY=$AWS_ACCESS_KEY
+            AWS_SECRET_KEY=$AWS_SECRET_KEY
+            AWS_SECRET_kEY=$AWS_SECRET_kEY
+            S3_BUCKET=$S3_BUCKET
+            KAFKA_BOOTSTRAP_SERVERS=$KAFKA_BOOTSTRAP_SERVERS
+            EOT
+          
             docker compose down
             docker compose up --build -d
-          
-            # Clean up dangling images to prevent disk bloat
             docker image prune -f
           EOF
