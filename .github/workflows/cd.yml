@@ -28,8 +28,16 @@ jobs:
           ssh "$EC2_USER@$EC2_HOST" << 'EOF'
             set -e
           
-            # Navigate to your project directory on EC2
-            cd /home/ubuntu/aviation-data-project
+            PROJECT_DIR="/home/ubuntu/aviation-data-project"
+            REPO_URL="https://github.com/BretaOsodo/aviation-data-intelligence-platform.git"
+          
+            # Clone repository if it doesn't exist, otherwise navigate and pull
+            if [ ! -d "$PROJECT_DIR" ]; then
+              echo "Cloning repository for the first time..."
+              git clone "$REPO_URL" "$PROJECT_DIR"
+            fi
+          
+            cd "$PROJECT_DIR"
           
             # Pull the latest changes from GitHub
             git pull origin main
