@@ -17,57 +17,50 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-      - name: Deploy to EC2 via SSH
+      - name: Deploy to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
-          CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_PASSWORD }}
           CLICKHOUSE_USER: ${{ secrets.CLICKHOUSE_USER }}
+          CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_PASSWORD }}
           CLICKHOUSE_DATABASE: ${{ secrets.CLICKHOUSE_DATABASE }}
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           S3_BUCKET: ${{ secrets.S3_BUCKET }}
           API_KEY: ${{ secrets.API_KEY }}
           KAFKA_BOOTSTRAP_SERVERS: ${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}
+          PROJECT_DIR: /home/ubuntu/aviation-data-project   # your existing path
+          REPO_URL: https://github.com/BretaOsodo/aviation-data-intelligence-platform.git
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
-          
-          ssh "$EC2_USER@$EC2_HOST" "
-            export CLICKHOUSE_PASSWORD='$CLICKHOUSE_PASSWORD'
-            export CLICKHOUSE_USER='$CLICKHOUSE_USER'
-            export CLICKHOUSE_DATABASE='$CLICKHOUSE_DATABASE'
-            export AWS_ACCESS_KEY='$AWS_ACCESS_KEY'
-            export AWS_SECRET_KEY='$AWS_SECRET_KEY'
-            export S3_BUCKET='$S3_BUCKET'
-            export API_KEY='$API_KEY'
-            export KAFKA_BOOTSTRAP_SERVERS='$KAFKA_BOOTSTRAP_SERVERS'
-          
-            bash -s
-          " << 'EOF'
-            set -e
-            PROJECT_DIR="/home/ubuntu/aviation-data-project"
-            REPO_URL="https://github.com/BretaOsodo/aviation-data-intelligence-platform.git"
-          
-            if [ ! -d "$PROJECT_DIR" ]; then
-              git clone "$REPO_URL" "$PROJECT_DIR"
-            fi
-          
-            cd "$PROJECT_DIR"
-            git pull origin main
-          
-            # Write out the .env file dynamically
-            cat << EOT > .env
-            CLICKHOUSE_PASSWORD=$CLICKHOUSE_PASSWORD
-            CLICKHOUSE_USER=$CLICKHOUSE_USER
-            CLICKHOUSE_DATABASE=$CLICKHOUSE_DATABASE
-            AWS_ACCESS_KEY=$AWS_ACCESS_KEY
-            AWS_SECRET_KEY=$AWS_SECRET_KEY
-            S3_BUCKET=$S3_BUCKET
-            KAFKA_BOOTSTRAP_SERVERS=$KAFKA_BOOTSTRAP_SERVERS
-            EOT
-          
-            docker compose down
-            docker compose up --build -d
-            docker image prune -f
-          EOF
+          ssh-keyscan -T 15 -H "$EC2_HOST" >> ~/.ssh/known_hosts
+          if [ ! -s ~/.ssh/known_hosts ]; then
+            echo "::error::Cannot reach port 22 on EC2_HOST. Check the instance is running, EC2_HOST is its current public IP, and the security group allows SSH."
+            exit 1
+          fi
+
+          SSH="ssh -o ServerAliveInterval=30 $EC2_USER@$EC2_HOST"
+
+          # 1. Get the latest code
+          $SSH "set -e
+            [ -d '$PROJECT_DIR/.git' ] || git clone '$REPO_URL' '$PROJECT_DIR'
+            cd '$PROJECT_DIR'
+            git pull origin main"
+
+          # 2. Send .env over stdin so secrets never appear in a command line
+          {
+            printf 'CLICKHOUSE_USER=%s\n'        "$CLICKHOUSE_USER"
+            printf 'CLICKHOUSE_PASSWORD=%s\n'    "$CLICKHOUSE_PASSWORD"
+            printf 'CLICKHOUSE_DATABASE=%s\n'    "$CLICKHOUSE_DATABASE"
+            printf 'AWS_ACCESS_KEY=%s\n'         "$AWS_ACCESS_KEY"
+            printf 'AWS_SECRET_KEY=%s\n'         "$AWS_SECRET_KEY"
+            printf 'S3_BUCKET=%s\n'              "$S3_BUCKET"
+            printf 'API_KEY=%s\n'                "$API_KEY"
+            printf 'KAFKA_BOOTSTRAP_SERVERS=%s\n' "$KAFKA_BOOTSTRAP_SERVERS"
+          } | $SSH "umask 077; cat > '$PROJECT_DIR/.env'"
+
+          # 3. Rebuild and restart (compose only recreates what changed)
+          $SSH "set -e
+            cd '$PROJECT_DIR'
+            docker compose up -d --build --remove-orphans
+            docker image prune -f"
