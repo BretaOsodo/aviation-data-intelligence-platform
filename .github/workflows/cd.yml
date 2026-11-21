@@ -18,6 +18,7 @@ jobs:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
       - name: Deploy to EC2
+        shell: /usr/bin/bash -e {0}
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
@@ -29,8 +30,8 @@ jobs:
           S3_BUCKET: ${{ secrets.S3_BUCKET }}
           API_KEY: ${{ secrets.API_KEY }}
           KAFKA_BOOTSTRAP_SERVERS: ${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}
-          PROJECT_DIR: /home/ubuntu/aviation-data-project   # your existing path
-          REPO_URL: https://github.com/BretaOsodo/aviation-data-intelligence-platform.git
+          PROJECT_DIR: ${{ vars.PROJECT_DIR }}
+          REPO_URL: ${{ vars.REPO_URL }}
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -T 15 -H "$EC2_HOST" >> ~/.ssh/known_hosts
@@ -39,27 +40,32 @@ jobs:
             exit 1
           fi
 
-          SSH="ssh -o ServerAliveInterval=30 $EC2_USER@$EC2_HOST"
+          SSH="ssh -o BatchMode=yes -o ServerAliveInterval=30 $EC2_USER@$EC2_HOST"
 
-          # 1. Get the latest code
+          echo "[1/3] Updating repository on EC2..."
           $SSH "set -e
-            [ -d '$PROJECT_DIR/.git' ] || git clone '$REPO_URL' '$PROJECT_DIR'
-            cd '$PROJECT_DIR'
-            git pull origin main"
+            mkdir -p '$PROJECT_DIR'
+            if [ ! -d '$PROJECT_DIR/.git' ]; then
+              git clone '$REPO_URL' '$PROJECT_DIR'
+            else
+              cd '$PROJECT_DIR'
+              git fetch origin main
+              git reset --hard origin/main
+            fi"
 
-          # 2. Send .env over stdin so secrets never appear in a command line
+          echo "[2/3] Writing .env file..."
           {
-            printf 'CLICKHOUSE_USER=%s\n'        "$CLICKHOUSE_USER"
-            printf 'CLICKHOUSE_PASSWORD=%s\n'    "$CLICKHOUSE_PASSWORD"
-            printf 'CLICKHOUSE_DATABASE=%s\n'    "$CLICKHOUSE_DATABASE"
-            printf 'AWS_ACCESS_KEY=%s\n'         "$AWS_ACCESS_KEY"
-            printf 'AWS_SECRET_KEY=%s\n'         "$AWS_SECRET_KEY"
-            printf 'S3_BUCKET=%s\n'              "$S3_BUCKET"
-            printf 'API_KEY=%s\n'                "$API_KEY"
-            printf 'KAFKA_BOOTSTRAP_SERVERS=%s\n' "$KAFKA_BOOTSTRAP_SERVERS"
-          } | $SSH "umask 077; cat > '$PROJECT_DIR/.env'"
+            printf 'CLICKHOUSE_USER=%s\n'          "$CLICKHOUSE_USER"
+            printf 'CLICKHOUSE_PASSWORD=%s\n'      "$CLICKHOUSE_PASSWORD"
+            printf 'CLICKHOUSE_DATABASE=%s\n'      "$CLICKHOUSE_DATABASE"
+            printf 'AWS_ACCESS_KEY=%s\n'           "$AWS_ACCESS_KEY"
+            printf 'AWS_SECRET_KEY=%s\n'           "$AWS_SECRET_KEY"
+            printf 'S3_BUCKET=%s\n'                "$S3_BUCKET"
+            printf 'API_KEY=%s\n'                  "$API_KEY"
+            printf 'KAFKA_BOOTSTRAP_SERVERS=%s\n'  "$KAFKA_BOOTSTRAP_SERVERS"
+          } | $SSH "set -e; mkdir -p '$PROJECT_DIR' && umask 077 && cat > '$PROJECT_DIR/.env'"
 
-          # 3. Rebuild and restart (compose only recreates what changed)
+          echo "[3/3] Rebuilding and starting Docker Compose stack..."
           $SSH "set -e
             cd '$PROJECT_DIR'
             docker compose up -d --build --remove-orphans
