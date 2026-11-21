@@ -3,7 +3,7 @@ variable "aws_region" {
 }
 
 variable "instance_type" {
-  default = "t3.medium" # Recommended for running docker-compose pipelines
+  default = "m7i.xlarge" # Recommended for running docker-compose pipelines
 }
 
 variable "key_name" {
